@@ -38,7 +38,6 @@ pygame.display.set_caption("WebCam Demo")
 screen = pygame.display.get_surface()
 
 while True:
-    tracklist = [(10,10)]
     events = pygame.event.get()
     for event in events:
         if event.type == QUIT or event.type == KEYDOWN:
@@ -69,15 +68,9 @@ while True:
         py = wp[1]*ratio #of the coordinate on the uncompressed image
         wp = (px,py)
 
-        if len(tracklist) < 240: #we keep track of some frames' avarage points
-           tracklist.append(wp)
-        else:
-           tracklist.pop(0)
-           tracklist.append(wp)
-
     #Draw everything
     #################
-    pygame.draw.lines(screen, (0,255,0), 0, tracklist)
+    pygame.draw.lines(screen, (0,255,0), 0, [[0,0], wp,])
     pygame.display.flip()
     pygame.time.delay(int(1000 * 1.0/fps))
 
