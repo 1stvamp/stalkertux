@@ -1,6 +1,7 @@
 import Image, motion, pygame, sys, psyco, opencv
 from pygame.locals import *
 from opencv import highgui
+from tuxisalive.api.sh import *
 
 # Color threshold for motion detection, the higher the more strict (avg. 50 is ok)
 COLOR_THRESHOLD = 30
@@ -25,13 +26,15 @@ oci = cci
 
 
 def move_tux_right(amount):
-    for i in range(1, amount):
-        print "tell tux to go right"
+    # This probably won't be the right amount of turns, so will need some
+    # tweaking
+    tux.spinning.rightOn(amount)
 
 
 def move_tux_left(amount):
-    for i in range(1, amount):
-        print "tell tux to go left"
+    # This probably won't be the right amount of turns, so will need some
+    # tweaking
+    tux.spinning.leftOn(amount)
 
 camera = highgui.cvCreateCameraCapture(0)
 def get_image():
