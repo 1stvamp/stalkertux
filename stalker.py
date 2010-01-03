@@ -24,12 +24,14 @@ ni = Image.new("RGB", SIZE, (255,255,255))
 oci = cci
 
 
-def move_tux_right():
-    print "right"
+def move_tux_right(amount):
+    for i in range(1, amount):
+        print "tell tux to go right"
 
 
-def move_tux_left():
-    print "left"
+def move_tux_left(amount):
+    for i in range(1, amount):
+        print "tell tux to go left"
 
 camera = highgui.cvCreateCameraCapture(0)
 def get_image():
@@ -80,10 +82,10 @@ while True:
         test_x = px - last_x
         if test_x < 0:
             if test_x <= (MOTION_BLOCK * -1):
-                move_tux_left()
+                move_tux_left(int(text_x / MOTION_BLOCK) * -1)
         elif test_x > 0:
             if test_x >= MOTION_BLOCK:
-                move_tux_right()
+                move_tux_right(int(test_x / MOTION_BLOCK))
     last_x = px
 
     # Draw everything
