@@ -4,7 +4,7 @@ from opencv import highgui
 from tuxisalive.api.sh import *
 
 # Color threshold for motion detection, the higher the more strict (avg. 50 is ok)
-COLOR_THRESHOLD = 30
+COLOR_THRESHOLD = 20
 # Resolution of the screen (and camera, but can be seperated), needs to be 4/3 (I think)
 SIZE = 640,480
 # Compressed size, needs to be 4/3 (widescreen hack?)
@@ -28,13 +28,15 @@ oci = cci
 def move_tux_right(amount):
     # This probably won't be the right amount of turns, so will need some
     # tweaking
-    tux.spinning.rightOn(amount)
+    tux.spinning.rightOn(1.0)
+    print amount
 
 
 def move_tux_left(amount):
     # This probably won't be the right amount of turns, so will need some
     # tweaking
-    tux.spinning.leftOn(amount)
+    tux.spinning.leftOn(1.0)
+    print amount
 
 camera = highgui.cvCreateCameraCapture(0)
 def get_image():
@@ -85,7 +87,7 @@ while True:
         test_x = px - last_x
         if test_x < 0:
             if test_x <= (MOTION_BLOCK * -1):
-                move_tux_left(int(text_x / MOTION_BLOCK) * -1)
+                move_tux_left(int(test_x / MOTION_BLOCK) * -1)
         elif test_x > 0:
             if test_x >= MOTION_BLOCK:
                 move_tux_right(int(test_x / MOTION_BLOCK))
