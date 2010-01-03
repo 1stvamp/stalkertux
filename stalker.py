@@ -3,11 +3,15 @@ from pygame.locals import *
 from opencv import highgui
 
 # Color threshold for motion detection, the higher the more strict (avg. 50 is ok)
-COLOR_THRESHOLD = 50
+COLOR_THRESHOLD = 30
 # Resolution of the screen (and camera, but can be seperated), needs to be 4/3 (I think)
 SIZE = 640,480
 # Compressed size, needs to be 4/3 (widescreen hack?)
 CSIZE = 160,120
+# Division of the screen to count as "walking" motion to trigger tux
+MOTION_BLOCK = SIZE[0] / 10
+# Frames per second
+FPS = 10.0
 
 psyco.full()
 pygame.init()
@@ -20,6 +24,13 @@ ni = Image.new("RGB", SIZE, (255,255,255))
 oci = cci
 
 
+def move_tux_right():
+    print "right"
+
+
+def move_tux_left():
+    print "left"
+
 camera = highgui.cvCreateCameraCapture(0)
 def get_image():
     im = highgui.cvQueryFrame(camera)
@@ -28,7 +39,7 @@ def get_image():
     # Convert Ipl image to PIL image
     return opencv.adaptors.Ipl2PIL(im)
 
-fps = 30.0
+last_x = None
 pygame.init()
 window = pygame.display.set_mode(SIZE)
 pygame.display.set_caption("Stalker Tux")
@@ -65,7 +76,17 @@ while True:
         py = motionPoint[1] * ratio
         wp = (px,py)
 
+    if last_x is not None:
+        test_x = px - last_x
+        if test_x < 0:
+            if test_x <= (MOTION_BLOCK * -1):
+                move_tux_left()
+        elif test_x > 0:
+            if test_x >= MOTION_BLOCK:
+                move_tux_right()
+    last_x = px
+
     # Draw everything
     pygame.draw.lines(screen, (0,255,0), 0, [[0,0], wp,])
     pygame.display.flip()
-    pygame.time.delay(int(1000 * 1.0 / fps))
+    pygame.time.delay(int(1000 * 1.0 / FPS))
