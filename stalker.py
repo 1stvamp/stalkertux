@@ -7,12 +7,6 @@ from opencv import highgui
 from tuxisalive.api.sh import *
 from tuxisalive.api import SPV_VERYSLOW, SPV_SLOW, SPV_NORMAL, SPV_FAST, SPV_VERYFAST
 
-# Division of the screen to count as "walking" motion to trigger tux
-motion_block = 640 / 10
-# Frames per second
-fps = 10
-last_x = None
-
 psyco.full()
 
 def move_tux_right(amount):
@@ -30,7 +24,15 @@ def move_tux_left(amount):
     tux.spinning.leftOnDuringAsync(duration, SPV_FAST)
     print amount
 
-def main():
+def main(argv):
+    # Division of the screen to count as "walking" motion to trigger tux
+    motion_block = 640 / 10
+    # Frames per second
+    fps = 10
+    tux_pos = 0
+    tux_pos_min = -5
+    tux_pos_max = 5
+
     try:
         opts, args = getopt.getopt(argv, "mb:fps", ["motionblock=", "framerate=",])
     except getopt.GetoptError:
@@ -52,25 +54,22 @@ def main():
         # mirror
         opencv.cv.cvFlip(im, None, 1)
 
-        faces = face.detect(im, 'haarcascade_profileface.xml')
+        positions = face.detect(im, 'haarcascade_data/haarcascade_profileface.xml')
 
         # display webcam image
         highgui.cvShowImage('Camera', im)
 
-
-        if last_x is not None:
-            test_x = px - last_x
-            if test_x < 0:
-                if test_x <= (MOTION_BLOCK * -1):
-                    move_tux_left(int(test_x / MOTION_BLOCK) * -1)
-            elif test_x > 0:
-                if test_x >= MOTION_BLOCK:
-                    move_tux_right(int(test_x / MOTION_BLOCK))
-        last_x = None
+        if positions:
+            pos = tux_pos_min + int(positions[0][0] / motion_block)
+            if tux_pos > pos:
+                move_tux_right(pos)
+            elif tux_pos < pos:
+                move_tux_left(pos)
+            tux_pos = pos
 
         if highgui.cvWaitKey(fps) >= 0:
             highgui.cvDestroyWindow('Camera')
             sys.exit(0)
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
