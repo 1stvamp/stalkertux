@@ -1,4 +1,8 @@
-import sys, psyco, opencv, face
+import sys
+import psyco
+import opencv
+import face
+import getopt
 from opencv import highgui
 from tuxisalive.api.sh import *
 
@@ -6,9 +10,9 @@ from tuxisalive.api.sh import *
 motion_block = 640 / 10
 # Frames per second
 fps = 10
+last_x = None
 
 psyco.full()
-
 
 def move_tux_right(amount):
     # This probably won't be the right amount of turns, so will need some
@@ -23,34 +27,47 @@ def move_tux_left(amount):
     tux.spinning.leftOn(1.0)
     print amount
 
-camera = highgui.cvCreateCameraCapture(0)
+def main():
+    try:
+        opts, args = getopt.getopt(argv, "mb:fps", ["motionblock=", "framerate=",])
+    except getopt.GetoptError:
+            sys.exit(2)
 
-last_x = None
+    for opt, arg in opts:
+            if opt in ("-mb", "--motionblock"):
+                    motion_block = arg
+            if opt in ("-fps", "--framerate"):
+                fps = arg
 
-while True:
-    highgui.cvNamedWindow('Camera', 1)
-    im = highgui.cvQueryFrame(camera)
-    if im is None:
-        break
-    # mirror
-    opencv.cv.cvFlip(im, None, 1)
+    camera = highgui.cvCreateCameraCapture(0)
 
-    faces = face.detect(im, 'haarcascade_profileface.xml')
+    while True:
+        highgui.cvNamedWindow('Camera', 1)
+        im = highgui.cvQueryFrame(camera)
+        if im is None:
+            break
+        # mirror
+        opencv.cv.cvFlip(im, None, 1)
 
-    # display webcam image
-    highgui.cvShowImage('Camera', im)
+        faces = face.detect(im, 'haarcascade_profileface.xml')
+
+        # display webcam image
+        highgui.cvShowImage('Camera', im)
 
 
-    if last_x is not None:
-        test_x = px - last_x
-        if test_x < 0:
-            if test_x <= (MOTION_BLOCK * -1):
-                move_tux_left(int(test_x / MOTION_BLOCK) * -1)
-        elif test_x > 0:
-            if test_x >= MOTION_BLOCK:
-                move_tux_right(int(test_x / MOTION_BLOCK))
-    last_x = None
+        if last_x is not None:
+            test_x = px - last_x
+            if test_x < 0:
+                if test_x <= (MOTION_BLOCK * -1):
+                    move_tux_left(int(test_x / MOTION_BLOCK) * -1)
+            elif test_x > 0:
+                if test_x >= MOTION_BLOCK:
+                    move_tux_right(int(test_x / MOTION_BLOCK))
+        last_x = None
 
-    if highgui.cvWaitKey(fps) >= 0:
-        highgui.cvDestroyWindow('Camera')
-        sys.exit(0)
+        if highgui.cvWaitKey(fps) >= 0:
+            highgui.cvDestroyWindow('Camera')
+            sys.exit(0)
+
+if __name__ == "__main__":
+    main()
