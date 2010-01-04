@@ -1,3 +1,5 @@
+# An importable adaptation of the facedetect.py example that comes with OpenCV
+
 import sys
 from opencv import cv
 
