@@ -12,16 +12,17 @@ psyco.full()
 def move_tux_right(amount):
     # This probably won't be the right amount of turns, so will need some
     # tweaking
-    duration = 0.2 * amount
-    tux.spinning.rightOnDuringAsync(duration, SPV_FAST)
+    duration = 0.1 * amount
+    # Moving right we need to move slightly faster because the actuator is slower
+    tux.spinning.rightOnDuring(duration, SPV_SLOW)
     print amount
 
 
 def move_tux_left(amount):
     # This probably won't be the right amount of turns, so will need some
     # tweaking
-    duration = 0.2 * amount
-    tux.spinning.leftOnDuringAsync(duration, SPV_FAST)
+    duration = 0.1 * amount
+    tux.spinning.leftOnDuring(duration, SPV_VERYSLOW)
     print amount
 
 def main(argv):
