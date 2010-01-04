@@ -25,4 +25,5 @@ def detect(image, cascade_file='haarcascade_frontalface_alt.xml'):
             cv.cvRectangle(image, cv.cvPoint( int(i.x), int(i.y)),
                          cv.cvPoint(int(i.x + i.width), int(i.y + i.height)),
                          cv.CV_RGB(0, 255, 0), 3, 8, 0)
+    return faces
 

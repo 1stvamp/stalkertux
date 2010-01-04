@@ -38,21 +38,21 @@ while True:
     # mirror
     opencv.cv.cvFlip(im, None, 1)
 
-    face.detect(im, 'haarcascade_profileface.xml')
+    faces = face.detect(im, 'haarcascade_profileface.xml')
 
     # display webcam image
     highgui.cvShowImage('Camera', im)
 
 
-#    if last_x is not None:
-#        test_x = px - last_x
-#        if test_x < 0:
-#            if test_x <= (MOTION_BLOCK * -1):
-#                move_tux_left(int(test_x / MOTION_BLOCK) * -1)
-#        elif test_x > 0:
-#            if test_x >= MOTION_BLOCK:
-#                move_tux_right(int(test_x / MOTION_BLOCK))
-#    last_x = None
+    if last_x is not None:
+        test_x = px - last_x
+        if test_x < 0:
+            if test_x <= (MOTION_BLOCK * -1):
+                move_tux_left(int(test_x / MOTION_BLOCK) * -1)
+        elif test_x > 0:
+            if test_x >= MOTION_BLOCK:
+                move_tux_right(int(test_x / MOTION_BLOCK))
+    last_x = None
 
     if highgui.cvWaitKey(fps) >= 0:
         break;
