@@ -5,6 +5,7 @@ import face
 import getopt
 from opencv import highgui
 from tuxisalive.api.sh import *
+from tuxisalive.api import SPV_VERYSLOW, SPV_SLOW, SPV_NORMAL, SPV_FAST, SPV_VERYFAST
 
 # Division of the screen to count as "walking" motion to trigger tux
 motion_block = 640 / 10
@@ -17,14 +18,16 @@ psyco.full()
 def move_tux_right(amount):
     # This probably won't be the right amount of turns, so will need some
     # tweaking
-    tux.spinning.rightOn(1.0)
+    duration = 0.2 * amount
+    tux.spinning.rightOnDuringAsync(duration, SPV_FAST)
     print amount
 
 
 def move_tux_left(amount):
     # This probably won't be the right amount of turns, so will need some
     # tweaking
-    tux.spinning.leftOn(1.0)
+    duration = 0.2 * amount
+    tux.spinning.leftOnDuringAsync(duration, SPV_FAST)
     print amount
 
 def main():
