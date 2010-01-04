@@ -20,7 +20,6 @@ def detect(image, cascade_file='haarcascade_frontalface_alt.xml'):
     faces = cv.cvHaarDetectObjects(grayscale, cascade, storage, 1.2, 2, cv.CV_HAAR_DO_CANNY_PRUNING, cv.cvSize(50, 50))
 
     if faces:
-        print 'face detected!'
         for i in faces:
             cv.cvRectangle(image, cv.cvPoint( int(i.x), int(i.y)),
                          cv.cvPoint(int(i.x + i.width), int(i.y + i.height)),

@@ -1,12 +1,9 @@
-import Image, pygame, sys, psyco, opencv, face
-from pygame.locals import *
+import sys, psyco, opencv, face
 from opencv import highgui
 from tuxisalive.api.sh import *
 
-# Resolution of the screen (and camera, but can be seperated), needs to be 4/3 (I think)
-size = 640,480
 # Division of the screen to count as "walking" motion to trigger tux
-motion_block = size[0] / 10
+motion_block = 640 / 10
 # Frames per second
 fps = 10
 
@@ -55,5 +52,5 @@ while True:
     last_x = None
 
     if highgui.cvWaitKey(fps) >= 0:
-        break;
-highgui.cvDestroyWindow('Camera')
+        highgui.cvDestroyWindow('Camera')
+        sys.exit(0)
