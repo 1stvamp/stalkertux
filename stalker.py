@@ -31,9 +31,9 @@ def main(argv):
     motion_block = 640 / 10
     # Frames per second
     fps = 10
-    tux_pos = 0
-    tux_pos_min = -5
-    tux_pos_max = 5
+    tux_pos = 0.0
+    tux_pos_min = -4.5
+    tux_pos_max = 4.5
 
     try:
         opts, args = getopt.getopt(argv, "mb:fps", ["motionblock=", "framerate=",])
@@ -63,10 +63,14 @@ def main(argv):
 
         if positions:
             pos = tux_pos_min + int(positions[0][0] / motion_block)
+            pos2 = pos
+            if pos < 0:
+                # Make pos2 positive
+                pos2 = pos * -1
             if tux_pos > pos:
-                move_tux_right(pos)
+                move_tux_right(po2)
             elif tux_pos < pos:
-                move_tux_left(pos)
+                move_tux_left(pos2)
             tux_pos = pos
 
         if highgui.cvWaitKey(fps) >= 0:
