@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import sys
 import psyco
 import opencv
