@@ -11,38 +11,32 @@ from tuxisalive.api import SPV_VERYSLOW, SPV_SLOW, SPV_NORMAL, SPV_FAST, SPV_VER
 psyco.full()
 
 def move_tux_right(amount):
-    # This probably won't be the right amount of turns, so will need some
-    # tweaking
-    duration = 0.1 * amount
-    # Moving right we need to move slightly faster because the actuator is slower
-    tux.spinning.rightOnDuring(duration, SPV_SLOW)
-    print amount
+    if amount > 0:
+        duration = 0.1 * amount
+        # Moving right we need to move slightly faster because the actuator is slower
+        tux.spinning.rightOnDuring(duration, SPV_SLOW)
+        print "right, amount: %d, duration: %f" % (amount, duration)
 
 
 def move_tux_left(amount):
-    # This probably won't be the right amount of turns, so will need some
-    # tweaking
-    duration = 0.1 * amount
-    tux.spinning.leftOnDuring(duration, SPV_VERYSLOW)
-    print amount
+    if amount > 0:
+        duration = 0.08 * amount
+        tux.spinning.leftOnDuring(duration, SPV_VERYSLOW)
+        print "left, amount: %d, duration: %f" % (amount, duration)
 
 def main(argv):
-    # Division of the screen to count as "walking" motion to trigger tux
-    motion_block = 640 / 10
     # Frames per second
-    fps = 10
-    tux_pos = 0.0
-    tux_pos_min = -4.5
-    tux_pos_max = 4.5
+    fps = 20
+    tux_pos = 5
+    tux_pos_min = 0.0
+    tux_pos_max = 9.0
 
     try:
-        opts, args = getopt.getopt(argv, "mb:fps", ["motionblock=", "framerate=",])
+        opts, args = getopt.getopt(argv, "fps", ["framerate=",])
     except getopt.GetoptError:
             sys.exit(2)
 
     for opt, arg in opts:
-            if opt in ("-mb", "--motionblock"):
-                    motion_block = arg
             if opt in ("-fps", "--framerate"):
                 fps = arg
 
@@ -56,22 +50,33 @@ def main(argv):
         # mirror
         opencv.cv.cvFlip(im, None, 1)
 
-        positions = face.detect(im, 'haarcascade_data/haarcascade_profileface.xml')
+#        positions = face.detect(im, 'haarcascade_data/haarcascade_profileface.xml')
+        positions = face.detect(im, 'haarcascade_data/haarcascade_frontalface_alt2.xml')
+#        if not positions:
+#            positions = face.detect(im, 'haarcascade_data/haarcascade_frontalface_alt2.xml')
 
         # display webcam image
         highgui.cvShowImage('Camera', im)
 
+        # Division of the screen to count as "walking" motion to trigger tux
+        image_size = opencv.cvGetSize(im)
+        motion_block = image_size.width / 9
+
         if positions:
-            pos = tux_pos_min + int(positions[0][0] / motion_block)
-            pos2 = pos
-            if pos < 0:
-                # Make pos2 positive
-                pos2 = pos * -1
-            if tux_pos > pos:
-                move_tux_right(po2)
-            elif tux_pos < pos:
-                move_tux_left(pos2)
-            tux_pos = pos
+            mp = None
+            for position in positions:
+                if not mp or mp['width'] > position['width']:
+                    mp = position
+            pos = (mp['x'] + (mp['width'] / 2)) / motion_block
+            print "tux pos: %f" % tux_pos
+            print "pos: %f" % pos
+
+            if pos != tux_pos:
+                if tux_pos > pos:
+                    move_tux_right(tux_pos - pos)
+                elif tux_pos < pos:
+                    move_tux_left(pos - tux_pos)
+                tux_pos = pos
 
         if highgui.cvWaitKey(fps) >= 0:
             highgui.cvDestroyWindow('Camera')
