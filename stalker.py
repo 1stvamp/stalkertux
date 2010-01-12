@@ -14,7 +14,7 @@ def move_tux_right(amount):
     if amount > 0:
         duration = 0.1 * amount
         # Moving right we need to move slightly faster because the actuator is slower
-        tux.spinning.rightOnDuring(duration, SPV_SLOW)
+        tux.spinning.rightOnDuring(duration, SPV_VERYSLOW)
         print "right, amount: %d, duration: %f" % (amount, duration)
 
 
