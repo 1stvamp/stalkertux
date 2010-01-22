@@ -1,28 +1,33 @@
 #!/usr/bin/python
 import sys
-import psyco
 import opencv
 import face
 import getopt
 from opencv import highgui
 from tuxisalive.api.sh import *
 from tuxisalive.api import SPV_VERYSLOW, SPV_SLOW, SPV_NORMAL, SPV_FAST, SPV_VERYFAST
-
-psyco.full()
+try:
+    import psyco
+except ImportError:
+    pass
+else:
+    psyco.full()
 
 def move_tux_right(amount):
     if amount > 0:
         duration = 0.1 * amount
         # Moving right we need to move slightly faster because the actuator is slower
-        tux.spinning.rightOnDuring(duration, SPV_VERYSLOW)
+        result = tux.spinning.rightOnDuring(duration, SPV_VERYSLOW)
         print "right, amount: %d, duration: %f" % (amount, duration)
+        return result
 
 
 def move_tux_left(amount):
     if amount > 0:
         duration = 0.08 * amount
-        tux.spinning.leftOnDuring(duration, SPV_VERYSLOW)
+        result = tux.spinning.leftOnDuring(duration, SPV_VERYSLOW)
         print "left, amount: %d, duration: %f" % (amount, duration)
+        return result
 
 def main(argv):
     # Frames per second
